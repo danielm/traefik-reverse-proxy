@@ -36,10 +36,10 @@ network = "proxy"
 exposedByDefault = false
 #swarmMode = true
 
-[traefikLog]
-  filePath = "/var/log/traefik.log"
-  format   = "json"
-
-[accessLog]
-  filePath = "/var/log/traefik_access.log"
-  format   = "json"
+#[traefikLog]
+#  filePath = "/var/log/traefik.log"
+#  format   = "json"
+#
+#[accessLog]
+#  filePath = "/var/log/traefik_access.log"
+#  format   = "json"

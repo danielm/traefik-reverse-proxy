@@ -9,6 +9,7 @@ services:
       traefik.frontend.rule: "Host:monitor.localhost"
       traefik.port: 8080
       traefik.enable: true
+      traefik.docker.network: proxy
     ports:
       - 80:80
       - 443:443
@@ -17,6 +18,22 @@ services:
       - ./conf/traefik.toml:/traefik.toml
       - ./conf/acme.json:/acme.json
 #      - ./conf/certs/:/certs/
+    networks:
+     - proxy
+  dozzle:
+    container_name: dozzle
+    image: amir20/dozzle:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      traefik.frontend.rule: "Host:dozzle.localhost"
+      traefik.port: 8080
+      traefik.docker.network: proxy
+      traefik.enable: true
+    environment:
+      DOZZLE_LEVEL: trace
+      DOZZLE_USERNAME: dozzle
+      DOZZLE_PASSWORD: dozzle
     networks:
      - proxy
 
