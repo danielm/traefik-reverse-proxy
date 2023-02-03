@@ -19,8 +19,61 @@ services:
 #      - ./conf/certs/:/certs/
     networks:
      - proxy
+  elasticsearch:
+    image: elasticsearch:8.6.1
+    restart: unless-stopped
+    container_name: elasticsearch
+    volumes:
+      - ./conf/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
+      - elasticsearch:/usr/share/elasticsearch/data
+    networks:
+      - elk
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      ELASTIC_PASSWORD: kibana_password
+      node.name: elasticsearch
+      discovery.type: single-node
+  kibana:
+    image: kibana:8.6.1
+    restart: unless-stopped
+    container_name: kibana
+    volumes:
+      - ./conf/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,Z
+    networks:
+      - elk
+      - proxy
+    depends_on:
+      - elasticsearch
+    #ports:
+    #  - 5601:5601
+    labels:
+      traefik.frontend.rule: "Host:kibana.localhost"
+      traefik.port: 5601
+      traefik.enable: true
+  #logstash:
+  #  image: logstash:8.6.1
+  #  restart: unless-stopped
+  #  container_name: logstash
+  #  volumes:
+  #    - ./conf/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
+  #    - ./conf/pipeline.conf:/usr/share/logstash/pipeline/logstash.conf:ro,Z
+  #  networks:
+  #    - elk
+  #  depends_on:
+  #    - elasticsearch
+  #  ports:
+  #    - 5044:5044
+  #    - 50000:50000/tcp
+  #    - 50000:50000/udp
+  #    - 9600:9600
 
 networks:
   proxy:
     external: true
+  elk:
+    name: elk
 
+volumes:
+  elasticsearch:
