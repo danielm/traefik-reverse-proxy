@@ -1,43 +1,56 @@
 version: '3'
 
 services:
+#  traefik:
+#    image: traefik:1.7-alpine
+#    restart: unless-stopped
+#    container_name: traefik
+#    labels:
+#      traefik.frontend.rule: "Host:monitor.localhost"
+#      traefik.port: 8080
+#      traefik.enable: true
+#      traefik.docker.network: proxy
+#    ports:
+#      - 80:80
+#      - 443:443
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+#      - ./conf/traefik.toml:/traefik.toml
+#      - ./conf/acme.json:/acme.json
+##      - ./conf/certs/:/certs/
+#    networks:
+#     - proxy
   traefik:
-    image: traefik:1.7-alpine
+    image: traefik:2.9
     restart: unless-stopped
     container_name: traefik
-    labels:
-      traefik.frontend.rule: "Host:monitor.localhost"
-      traefik.port: 8080
-      traefik.enable: true
-      traefik.docker.network: proxy
     ports:
       - 80:80
       - 443:443
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./conf/traefik.toml:/traefik.toml
-      - ./conf/acme.json:/acme.json
-#      - ./conf/certs/:/certs/
-    networks:
-     - proxy
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./conf/traefik.yml:/traefik.yml:ro"
+      - "./conf/.htpasswd:/htpasswd:ro"
+
   dozzle:
     container_name: dozzle
     image: amir20/dozzle:latest
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     labels:
-      traefik.frontend.rule: "Host:dozzle.localhost"
-      traefik.port: 8080
-      traefik.docker.network: proxy
-      traefik.enable: true
-    environment:
-      DOZZLE_LEVEL: trace
-      DOZZLE_USERNAME: dozzle
-      DOZZLE_PASSWORD: dozzle
-    networks:
-     - proxy
+      - "traefik.enable=true"
+      - "traefik.http.routers.dozzle.entrypoints=http"
+      - "traefik.http.routers.dozzle.rule=Host(`dozzle.$HOST_DOMAIN`)"
+      #- "traefik.http.routers.dozzle.middlewares=auth-middleware"
+      #- "traefik.http.middlewares.auth-middleware.basicauth.usersfile=/.htpasswd"
+
+#    environment:
+#      DOZZLE_LEVEL: trace
+#      DOZZLE_USERNAME: dozzle
+#      DOZZLE_PASSWORD: dozzle
+#    networks:
+#     - proxy
 
 networks:
-  proxy:
-    external: true
-
+  default:
+      name: $DEFAULT_NETWORK
