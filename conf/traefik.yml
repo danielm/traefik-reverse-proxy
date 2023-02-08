@@ -3,7 +3,7 @@ log:
   level: INFO
 
 api:
-  insecure: true
+  #insecure: true
   dashboard: true
 
 entryPoints:
@@ -14,4 +14,8 @@ providers:
   docker:
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
+    watch: true
+    network: traefik-proxy
+  file:
+    filename: /traefik_dyn.yml
     watch: true

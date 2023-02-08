@@ -1,0 +1,8 @@
+## DYNAMIC CONFIGURATION
+
+http:
+  middlewares:
+    auth:
+      basicAuth:
+        realm: "Traefik Basic Auth"
+        usersFile: "/.htpasswd"

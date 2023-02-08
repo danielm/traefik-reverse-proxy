@@ -4,36 +4,31 @@ Minimal Traefik stuff to set up ur networking on a single docker host.
 
 ## Install
 - Clone the repository
-- Create a docker network and name it proxy: `docker network create proxy`
+- Create a docker network and name it proxy: `docker network create traefik-proxy`
+- create `.env` from `.env.default`
+- create `conf/.htpasswd` from `conf/.htpasswd.default`
 - docker-compose up
-- Monitor available at: http://monitor.localhost/  (user admin, pass: admin)
+- Monitor available at: http://traefik.localhost/  (user admin, pass: admin)
 - Expose containers using stuff like:
 ```yaml
     myservice:
       labels:
-      traefik.port: 80
-      traefik.frontend.rule: Host:api.localhost
-      traefik.docker.network: proxy
-      traefik.enable: true
+        - "traefik.enable=true"
+        - "traefik.http.routers.my-app.entrypoints=http"
+        - "traefik.http.routers.my-app.rule=Host(`my-app.localhost`)"
     networks:
-      - proxy
+      - traefik-proxy
 ```
 
 ## Facts
 - Use *.localhost rules on your containers and services to 'expose' them.
-- `proxy` is the name of the external network
-- Change monitor user/pass by editing `conf/traefik.yaml`
+- `traefik-proxy` is the name of the external network
 
-##  Change monitor passord
+##  Change monitor password
 - Use Apache tools: `htpasswd -nb admin my_not_so_secret_pass`
 - Or some online editor [like this one](https://www.web2generators.com/apache-tools/htpasswd-generator)
 
 ## ToDo
-- Lots..
-- Cleanup
-- Dynamic network name
-- Dynamic domain
-- Move some stuff to Env vars
 - HTTPS: Basic/"local" SSL certificates for local development
 - HTTPS: Let's encrypt
 - Build / makefiles
