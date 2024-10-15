@@ -1,0 +1,4 @@
+services:
+  traefik:
+    labels:
+      - "traefik.http.routers.api.entrypoints=web"

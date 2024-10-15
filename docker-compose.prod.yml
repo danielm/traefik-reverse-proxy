@@ -1,0 +1,7 @@
+services:
+  traefik:
+    volumes:
+      - "~/letsencrypt:/letsencrypt"
+    labels:
+      - "traefik.http.routers.api.entrypoints=websecure"
+      - "traefik.http.routers.api.tls.certresolver=letsEncryptResolver"
