@@ -2,7 +2,7 @@ services:
   traefik:
     image: traefik:2.9
     restart: unless-stopped
-    container_name: traefik-owo-${APP_ENV:-dev}
+    container_name: traefik-${APP_ENV:-dev}
     ports:
       - 80:80
       - 443:443
@@ -16,6 +16,15 @@ services:
       - "traefik.http.routers.api.rule=Host(`$HOST_DOMAIN`)"
       - "traefik.http.routers.api.service=api@internal"
       - "traefik.http.routers.api.middlewares=auth@file"
+  whoami:
+    image: traefik/whoami
+    restart: unless-stopped
+    container_name: whoami-${APP_ENV:-dev}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.$HOST_DOMAIN`)"
+      - "traefik.http.routers.whoami.middlewares=auth@file"
+
 networks:
   default:
     name: traefik-proxy

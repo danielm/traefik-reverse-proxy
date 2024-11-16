@@ -2,3 +2,6 @@ services:
   traefik:
     labels:
       - "traefik.http.routers.api.entrypoints=web"
+  whoami:
+    labels:
+      - "traefik.http.routers.whoami.entrypoints=web"

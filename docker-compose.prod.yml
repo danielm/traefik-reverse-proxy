@@ -5,3 +5,7 @@ services:
     labels:
       - "traefik.http.routers.api.entrypoints=websecure"
       - "traefik.http.routers.api.tls.certresolver=letsEncryptResolver"
+  whoami:
+    labels:
+      - "traefik.http.routers.whoami.entrypoints=websecure"
+      - "traefik.http.routers.whoami.tls.certresolver=letsEncryptResolver"
