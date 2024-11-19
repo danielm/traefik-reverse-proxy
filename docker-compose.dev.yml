@@ -1,7 +1,11 @@
 services:
   traefik:
+    restart: unless-stopped
+    container_name: traefik-${APP_ENV:-dev}
     labels:
       - "traefik.http.routers.api.entrypoints=web"
   whoami:
+    restart: unless-stopped
+    container_name: whoami-${APP_ENV:-dev}
     labels:
       - "traefik.http.routers.whoami.entrypoints=web"
